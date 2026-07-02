@@ -1,0 +1,29 @@
+class Solution {
+    public ListNode insertionSortList(ListNode head) {
+        // Dummy node (helps in easy insertion)
+        ListNode dummy = new ListNode(0);
+        
+        ListNode curr = head; // current node
+        
+        while (curr != null) {
+            ListNode prev = dummy; // start from beginning
+            
+            // Find correct position
+            while (prev.next != null && prev.next.val < curr.val) {
+                prev = prev.next;
+            }
+            
+            // Store next node
+            ListNode next = curr.next;
+            
+            // Insert current node
+            curr.next = prev.next;
+            prev.next = curr;
+            
+            // Move to next node
+            curr = next;
+        }
+        
+        return dummy.next;
+    }
+}
