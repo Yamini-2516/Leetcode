@@ -1,0 +1,106 @@
+import java.util.Random;
+
+class Solution {
+
+    Random rand = new Random(); // used for random pivot selection
+
+    public int[] sortArray(int[] nums){
+        // Start quick sort on full array
+        quickSort(nums, 0, nums.length - 1);
+        return nums;class Solution {
+    public int[] sortArray(int[] nums){
+        quickSort(nums, 0, nums.length - 1);
+        return nums;
+    }
+
+    int partition(int arr[], int low, int high){
+        int pivot = arr[high];
+        int i = low - 1;
+
+        for(int j = low; j < high; j++){
+            if(arr[j] < pivot){
+                i++;
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+
+        int temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+
+        return i + 1;
+    }
+
+    void quickSort(int arr[], int low, int high){
+        if(low < high){
+            int pi = partition(arr, low, high);
+
+            quickSort(arr, low, pi - 1);
+            quickSort(arr, pi + 1, high);
+        }
+    }
+}
+
+    }
+
+    int partition(int arr[], int low, int high){
+
+        // 🔥 Step 1: Choose a random pivot to avoid worst case (O(n^2))
+        int pivotIndex = low + rand.nextInt(high - low + 1);
+
+        // Swap random pivot with last element (standard approach)
+        int temp1 = arr[pivotIndex];
+        arr[pivotIndex] = arr[high];
+        arr[high] = temp1;
+
+        // Now pivot is at 'high'
+        int pivot = arr[high];
+
+        // i will track the position for smaller elements
+        int i = low - 1;
+
+        // 🔁 Traverse array and rearrange elements
+        for(int j = low; j < high; j++){
+
+            // If current element is smaller than pivot
+            if(arr[j] < pivot){
+                i++;
+
+                // Swap arr[i] and arr[j]
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+
+            // ⚠️ Note:
+            // If arr[j] == pivot, we do NOTHING
+            // That is why duplicates go to right side → can cause imbalance
+        }
+
+        // 🧩 Place pivot in correct sorted position
+        int temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+
+        // Return pivot index
+        return i + 1;
+    }
+
+    void quickSort(int arr[], int low, int high){
+
+        // Base condition: stop when subarray has 1 or 0 elements
+        if(low < high){
+
+            // Partition array and get pivot index
+            int pi = partition(arr, low, high);
+
+            // 🔽 Recursively sort left part (< pivot)
+            quickSort(arr, low, pi - 1);
+
+            // 🔼 Recursively sort right part (> pivot)
+            quickSort(arr, pi + 1, high);
+        }
+    }
+}
