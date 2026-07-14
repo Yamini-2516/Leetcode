@@ -1,0 +1,19 @@
+class Solution {
+    public String largestEven(String s) {
+        int lastIndex = -1;
+
+        // Step 1: Find last '2'
+        for (int i = s.length() - 1; i >= 0; i--) {
+            if (s.charAt(i) == '2') {
+                lastIndex = i;
+                break;
+            }
+        }
+
+        // Step 2: If no '2' → no even number
+        if (lastIndex == -1) return "";
+
+        // Step 3: Return substring
+        return s.substring(0, lastIndex + 1);
+    }
+}
