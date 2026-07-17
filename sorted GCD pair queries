@@ -1,0 +1,59 @@
+class Solution {
+    public int[] gcdValues(int[] nums, long[] queries) {
+        int max = 50000;
+
+        int[] freq = new int[max + 1];
+        for (int x : nums) freq[x]++;
+
+        // count numbers divisible by g
+        long[] count = new long[max + 1];
+        for (int g = 1; g <= max; g++) {
+            for (int m = g; m <= max; m += g) {
+                count[g] += freq[m];
+            }
+        }
+
+        // gcd pair count
+        long[] gcdCount = new long[max + 1];
+
+        for (int g = max; g >= 1; g--) {
+            long c = count[g];
+            long totalPairs = c * (c - 1) / 2;
+
+            for (int m = 2 * g; m <= max; m += g) {
+                totalPairs -= gcdCount[m];
+            }
+
+            gcdCount[g] = totalPairs;
+        }
+
+        // prefix sum
+        long[] prefix = new long[max + 1];
+        for (int i = 1; i <= max; i++) {
+            prefix[i] = prefix[i - 1] + gcdCount[i];
+        }
+
+        // answer queries
+        int[] ans = new int[queries.length];
+
+        for (int i = 0; i < queries.length; i++) {
+            long q = queries[i];
+
+            int left = 1, right = max, res = 1;
+
+            while (left <= right) {
+                int mid = (left + right) / 2;
+                if (prefix[mid] > q) {
+                    res = mid;
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            }
+
+            ans[i] = res;
+        }
+
+        return ans;
+    }
+}
