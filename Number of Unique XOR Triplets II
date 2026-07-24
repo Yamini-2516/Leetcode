@@ -1,0 +1,26 @@
+import java.util.*;
+
+class Solution {
+    public int uniqueXorTriplets(int[] nums) {
+        int n = nums.length;
+        
+        Set<Integer> result = new HashSet<>();
+        Set<Integer> pairXor = new HashSet<>();
+
+        // Step 1: All pair XOR (i ≤ j)
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j < n; j++) {
+                pairXor.add(nums[i] ^ nums[j]);
+            }
+        }
+
+        // Step 2: Combine with third element
+        for (int val : pairXor) {
+            for (int k = 0; k < n; k++) {
+                result.add(val ^ nums[k]);
+            }
+        }
+
+        return result.size();
+    }
+}
