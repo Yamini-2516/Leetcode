@@ -1,0 +1,42 @@
+class Solution {
+    public int stoneGameII(int[] piles) {
+        int n = piles.length;
+
+        // suffixSum[i] = total stones from i to end
+        int[] suffixSum = new int[n + 1];
+        for (int i = n - 1; i >= 0; i--) {
+            suffixSum[i] = suffixSum[i + 1] + piles[i];
+        }
+
+        Integer[][] memo = new Integer[n][n + 1];
+
+        return dfs(0, 1, piles, suffixSum, memo);
+    }
+
+    private int dfs(int i, int M, int[] piles, int[] suffixSum, Integer[][] memo) {
+        int n = piles.length;
+
+        if (i >= n) return 0;
+
+        // Can take all remaining piles
+        if (i + 2 * M >= n) {
+            return suffixSum[i];
+        }
+
+        if (memo[i][M] != null) {
+            return memo[i][M];
+        }
+
+        int minOpponent = Integer.MAX_VALUE;
+
+        for (int x = 1; x <= 2 * M; x++) {
+            minOpponent = Math.min(
+                minOpponent,
+                dfs(i + x, Math.max(M, x), piles, suffixSum, memo)
+            );
+        }
+
+        memo[i][M] = suffixSum[i] - minOpponent;
+        return memo[i][M];
+    }
+}
