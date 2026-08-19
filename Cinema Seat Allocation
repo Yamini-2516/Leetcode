@@ -1,0 +1,53 @@
+import java.util.*;
+
+class Solution {
+    public int maxNumberOfFamilies(int n, int[][] reservedSeats) {
+
+        Map<Integer, Integer> map = new HashMap<>();
+
+        // Store reserved seats as a bitmask for each row
+        for (int[] seat : reservedSeats) {
+            int row = seat[0];
+            int col = seat[1];
+
+            // We only care about seats 2 to 9
+            if (col >= 2 && col <= 9) {
+                int bit = 1 << (col - 2);
+
+                map.put(row, map.getOrDefault(row, 0) | bit);
+            }
+        }
+
+        // Initially assume every row is empty.
+        // Every empty row can accommodate 2 families.
+        int answer = 2 * n;
+
+        // Masks for the three possible groups
+        int left = 0b00001111;    // seats 2,3,4,5
+        int middle = 0b00111100;  // seats 4,5,6,7
+        int right = 0b11110000;   // seats 6,7,8,9
+
+        // Process only rows having relevant reserved seats
+        for (int reserved : map.values()) {
+
+            boolean leftAvailable = (reserved & left) == 0;
+            boolean rightAvailable = (reserved & right) == 0;
+
+            if (leftAvailable && rightAvailable) {
+                // We can put two families
+                answer += 0; 
+            } 
+            else if (leftAvailable || rightAvailable ||
+                     (reserved & middle) == 0) {
+                // We can put one family
+                answer -= 1;
+            } 
+            else {
+                // This row cannot accommodate any family
+                answer -= 2;
+            }
+        }
+
+        return answer;
+    }
+}
