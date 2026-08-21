@@ -1,0 +1,62 @@
+class Solution {
+    private int[] coins;
+    private int k;
+
+    public long findKthSmallest(int[] coins, int k) {
+        this.coins = coins;
+        this.k = k;
+
+        long left = 1;
+        long right = 100_000_000_000L; // 1e11
+
+        while (left < right) {
+            long mid = left + (right - left) / 2;
+            if (check(mid)) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+
+        return left;
+    }
+
+    private boolean check(long x) {
+        long count = 0;
+        int n = coins.length;
+
+        for (int mask = 1; mask < (1 << n); mask++) {
+            long lcmValue = 1;
+
+            for (int i = 0; i < n; i++) {
+                if ((mask & (1 << i)) != 0) {
+                    lcmValue = lcm(lcmValue, coins[i]);
+                    if (lcmValue > x) break;
+                }
+            }
+
+            if (lcmValue > x) continue;
+
+            if ((Integer.bitCount(mask) & 1) == 1) {
+                count += x / lcmValue;
+            } else {
+                count -= x / lcmValue;
+            }
+        }
+
+        return count >= k;
+    }
+
+    private long gcd(long a, long b) {
+        while (b != 0) {
+            long temp = a % b;
+            a = b;
+            b = temp;
+        }
+        return a;
+    }
+
+    private long lcm(long a, long b) {
+        return a / gcd(a, b) * b;
+    }
+}
