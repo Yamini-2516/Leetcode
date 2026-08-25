@@ -1,0 +1,20 @@
+class Solution {
+    public int missingMultiple(int[] nums, int k) {
+        
+        boolean[] present = new boolean[101];
+        
+        // Mark numbers present in nums
+        for (int x : nums) {
+            present[x] = true;
+        }
+        
+        // Check k, 2k, 3k, 4k, ...
+        for (int i = 1; ; i++) {
+            int multiple = k * i;
+            
+            if (multiple >= present.length || !present[multiple]) {
+                return multiple;
+            }
+        }
+    }
+}
