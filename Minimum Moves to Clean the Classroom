@@ -1,0 +1,150 @@
+import java.util.*;
+
+class Solution {
+    public int minMoves(String[] classroom, int energy) {
+
+        int m = classroom.length;
+        int n = classroom[0].length();
+
+        int startR = 0, startC = 0;
+        int litterCount = 0;
+
+        // Store bit number for each litter cell
+        int[][] litterId = new int[m][n];
+
+        for (int[] row : litterId) {
+            Arrays.fill(row, -1);
+        }
+
+        // Find start and assign IDs to litter
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+
+                char ch = classroom[i].charAt(j);
+
+                if (ch == 'S') {
+                    startR = i;
+                    startC = j;
+                } 
+                else if (ch == 'L') {
+                    litterId[i][j] = litterCount++;
+                }
+            }
+        }
+
+        // No litter
+        if (litterCount == 0) {
+            return 0;
+        }
+
+        /*
+         * mask:
+         * 1 = litter still needs to be collected
+         * 0 = litter already collected
+         *
+         * Example:
+         * 3 litter -> 111 initially
+         */
+        int initialMask = (1 << litterCount) - 1;
+
+        /*
+         * visited[row][col][energy][mask]
+         */
+        boolean[][][][] visited =
+            new boolean[m][n][energy + 1][1 << litterCount];
+
+        Queue<int[]> queue = new LinkedList<>();
+
+        // row, col, remaining energy, mask
+        queue.offer(new int[] {
+            startR,
+            startC,
+            energy,
+            initialMask
+        });
+
+        visited[startR][startC][energy][initialMask] = true;
+
+        int moves = 0;
+
+        int[] dr = {-1, 1, 0, 0};
+        int[] dc = {0, 0, -1, 1};
+
+        while (!queue.isEmpty()) {
+
+            int size = queue.size();
+
+            // Process one BFS level
+            while (size-- > 0) {
+
+                int[] cur = queue.poll();
+
+                int r = cur[0];
+                int c = cur[1];
+                int currEnergy = cur[2];
+                int mask = cur[3];
+
+                // All litter collected
+                if (mask == 0) {
+                    return moves;
+                }
+
+                for (int k = 0; k < 4; k++) {
+
+                    int nr = r + dr[k];
+                    int nc = c + dc[k];
+
+                    // Outside grid
+                    if (nr < 0 || nr >= m ||
+                        nc < 0 || nc >= n) {
+                        continue;
+                    }
+
+                    // Obstacle
+                    if (classroom[nr].charAt(nc) == 'X') {
+                        continue;
+                    }
+
+                    // Need one energy for every move
+                    if (currEnergy == 0) {
+                        continue;
+                    }
+
+                    int newEnergy = currEnergy - 1;
+                    int newMask = mask;
+
+                    char next = classroom[nr].charAt(nc);
+
+                    // Reset energy
+                    if (next == 'R') {
+                        newEnergy = energy;
+                    }
+
+                    // Collect litter
+                    if (next == 'L') {
+                        int id = litterId[nr][nc];
+
+                        // Mark this litter as collected
+                        newMask &= ~(1 << id);
+                    }
+
+                    if (!visited[nr][nc][newEnergy][newMask]) {
+
+                        visited[nr][nc][newEnergy][newMask] = true;
+
+                        queue.offer(new int[] {
+                            nr,
+                            nc,
+                            newEnergy,
+                            newMask
+                        });
+                    }
+                }
+            }
+
+            moves++;
+        }
+
+        return -1;
+    }
+}
