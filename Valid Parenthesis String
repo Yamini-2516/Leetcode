@@ -1,0 +1,33 @@
+class Solution {
+    public boolean checkValidString(String s) {
+        int low = 0;
+        int high = 0;
+
+        for (char ch : s.toCharArray()) {
+
+            if (ch == '(') {
+                low++;
+                high++;
+            } 
+            else if (ch == ')') {
+                low--;
+                high--;
+            } 
+            else { // '*'
+                low--;   // '*' can be ')'
+                high++;  // '*' can be '('
+            }
+
+            // If even the maximum possible '(' becomes negative
+            if (high < 0) {
+                return false;
+            }
+
+            // Minimum cannot be negative
+            low = Math.max(low, 0);
+        }
+
+        // Valid only if we can have exactly 0 unmatched '('
+        return low == 0;
+    }
+}
